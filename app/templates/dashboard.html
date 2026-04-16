@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard - FOCURA</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+</head>
+<body>
+	<div class="dashboard-wrapper">
+
+		<!-- SIDEBAR -->
+		<aside class="sidebar">
+			<div class="sidebar-header">
+				<span class="sidebar-menu-icon">&#9776;</span>
+				<span class="sidebar-title">FOCURA</span>
+			</div>
+
+			<nav class="sidebar-nav">
+				<ul>
+					<li class="active">
+						<span class="sidebar-icon">&#9632;</span> Dashboard
+					</li>
+					<li>
+						<span class="sidebar-icon">&#128640;</span> Progress
+					</li>
+					<li>
+						<span class="sidebar-icon">&#128100;</span> User
+					</li>
+				</ul>
+			</nav>
+		</aside>
+
+		<!-- MAIN CONTENT -->
+		<main class="dashboard-main">
+			<div class="dashboard-container">
+
+				<!-- HEADER -->
+				<div class="dashboard-header">
+					<h2>Halo, {{ nama_anak }}!</h2>
+				</div>
+
+				<!-- STAT -->
+				<div class="dashboard-stats">
+
+					<div class="stat-card">
+						<span class="stat-label">Jumlah sesi diselesaikan</span>
+						<span class="stat-value">{{ total_sesi }}</span>
+					</div>
+
+					<div class="stat-card">
+						<span class="stat-label">Total skor</span>
+						<span class="stat-value">{{ total_skor }}</span>
+					</div>
+
+				</div>
+
+			</div>
+		</main>
+
+	</div>
+</body>
+</html>

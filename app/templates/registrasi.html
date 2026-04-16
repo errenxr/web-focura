@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Registrasi - FOCURA</title>
+
+	<!-- CSS pakai Flask -->
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/registrasi.css') }}">
+</head>
+
+<body>
+	<div class="container">
+
+		<div class="register-section">
+			<h2 class="register-title">Daftar</h2>
+
+			<!-- FORM diarahkan ke route Flask -->
+			<form class="register-form" method="POST">
+
+				<label for="email">Email</label>
+				<input type="email" id="email" name="email" placeholder="Ketik email Anda" required>
+
+				<label for="nama">Nama Anak</label>
+				<input type="text" id="nama" name="nama_anak" placeholder="Ketik nama anak Anda" required>
+
+				<label for="umur">Umur</label>
+				<input type="number" id="umur" name="umur" placeholder="Ketik umur anak Anda" required>
+
+				<label for="password">Password</label>
+				<input type="password" id="password" name="password" placeholder="Ketik password Anda" required>
+
+				<button type="submit" class="register-btn">Daftar</button>
+			</form>
+
+			<div class="login-link">
+				Sudah punya akun?
+				<a href="{{ url_for('main.login') }}">Masuk</a>
+			</div>
+		</div>
+
+		<div class="side-section">
+			<div class="side-bg"></div>
+			<div class="side-content">
+				<span class="brand">FOCURA</span>
+			</div>
+		</div>
+
+	</div>
+</body>
+</html>

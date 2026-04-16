@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - FOCURA</title>
+
+    <!-- CSS dari Flask static -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    <div class="container">
+
+        <!-- FORM LOGIN -->
+        <div class="login-section">
+            <h2 class="login-title">Masuk</h2>
+
+            <form class="login-form" method="POST" action="{{ url_for('main.login') }}">
+                
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Ketik email Anda" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Ketik password Anda" required>
+
+                <button type="submit" class="login-btn">Masuk</button>
+            </form>
+
+            <!-- LINK KE REGISTRASI -->
+            <div class="register-link">
+                Belum punya akun? 
+                <a href="{{ url_for('main.register') }}">Daftar</a>
+            </div>
+        </div>
+
+        <!-- BAGIAN SAMPING -->
+        <div class="side-section">
+            <div class="side-bg"></div>
+            <div class="side-content">
+                <span class="brand">FOCURA</span>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
