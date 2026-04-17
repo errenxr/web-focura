@@ -1,0 +1,59 @@
+body {
+	font-family: 'Inter', Arial, sans-serif;
+	background: #f5f8fc;
+}
+
+.progress-table-wrapper {
+	background: #fff;
+	border-radius: 16px;
+	box-shadow: 0 2px 8px rgba(24,90,219,0.04);
+	padding: 32px 24px;
+	margin-top: 24px;
+	overflow-x: auto;
+}
+
+.progress-table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 700px;
+}
+
+.progress-table thead tr {
+	background: #e3ecfa;
+}
+
+.progress-table th, .progress-table td {
+	padding: 14px 12px;
+	text-align: left;
+	font-size: 1rem;
+}
+
+.progress-table th {
+	color: #185adb;
+	font-weight: 700;
+	border-bottom: 2px solid #dbeafe;
+}
+
+.progress-table tbody tr {
+	border-bottom: 1px solid #f0f4fa;
+	transition: background 0.2s;
+}
+
+.progress-table tbody tr:hover {
+	background: #f3f7fd;
+}
+
+.progress-table td {
+	color: #222;
+	font-weight: 500;
+}
+
+@media (max-width: 900px) {
+	.progress-table-wrapper {
+		padding: 16px 4px;
+	}
+	.progress-table th, .progress-table td {
+		padding: 10px 6px;
+		font-size: 0.95rem;
+	}
+}

@@ -3,19 +3,18 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Dashboard - FOCURA</title>
+	<title>Progress Monitoring - FOCURA</title>
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/progress.css') }}">
 </head>
 <body>
 	<div class="dashboard-wrapper">
-
 		<!-- SIDEBAR -->
 		<aside class="sidebar">
 			<div class="sidebar-header">
 				<span class="sidebar-menu-icon">&#9776;</span>
 				<span class="sidebar-title">FOCURA</span>
 			</div>
-
 			<nav class="sidebar-nav">
 				<ul>
 					<li class="{% if active_page == 'dashboard' %}active{% endif %}">
@@ -36,34 +35,42 @@
 				</ul>
 			</nav>
 		</aside>
-
 		<!-- MAIN CONTENT -->
 		<main class="dashboard-main">
 			<div class="dashboard-container">
-
 				<!-- HEADER -->
 				<div class="dashboard-header">
-					<h2>Halo, {{ nama_anak }}!</h2>
+					<h2>Progress Monitoring</h2>
 				</div>
-
-				<!-- STAT -->
-				<div class="dashboard-stats">
-
-					<div class="stat-card">
-						<span class="stat-label">Jumlah sesi diselesaikan</span>
-						<span class="stat-value">{{ total_sesi }}</span>
-					</div>
-
-					<div class="stat-card">
-						<span class="stat-label">Total skor</span>
-						<span class="stat-value">{{ total_skor }}</span>
-					</div>
-
+				<!-- TABLE -->
+				<div class="progress-table-wrapper">
+					<table class="progress-table">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Tanggal</th>
+								<th>ID Sesi</th>
+								<th>Skor</th>
+								<th>Durasi Fokus</th>
+								<th>Indikasi Fokus</th>
+							</tr>
+						</thead>
+						<tbody>
+                            {% for s in sessions %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ s.tanggal }}</td>
+                                <td>{{ s.id }}</td>
+                                <td>{{ s.skor_total if s.skor_total else 0 }}</td>
+                                <td>{{ s.durasi_total if s.durasi_total else 0 }} detik</td>
+                                <td>-</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+					</table>
 				</div>
-
 			</div>
 		</main>
-
 	</div>
 </body>
 </html>

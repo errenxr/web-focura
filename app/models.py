@@ -104,7 +104,19 @@ def get_user_sessions(user_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    cursor.execute("SELECT * FROM sessions WHERE user_id = %s", (user_id,))
+    query = """
+    SELECT
+        id,
+        DATE(start_time) AS tanggal,
+        durasi_total,
+        skor_total,
+        status
+    FROM sessions
+    WHERE user_id = %s
+    ORDER BY start_time DESC
+    """
+    
+    cursor.execute(query, (user_id,))
     sessions = cursor.fetchall()
 
     cursor.close()

@@ -68,6 +68,20 @@ def dashboard():
         total_skor=total_skor
     )
 
+@main.route("/progress")
+def progress():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    user_id = session["user_id"]
+
+    sessions = get_user_sessions(user_id)
+
+    return render_template(
+        "progress.html",
+        sessions=sessions
+    )
+
 
 @main.route("/logout")
 def logout():
