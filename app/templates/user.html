@@ -3,20 +3,20 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Dashboard - FOCURA</title>
+	<title>Profil Pengguna - FOCURA</title>
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
 </head>
 <body>
 	<div class="dashboard-wrapper">
 
-		<!-- SIDEBAR -->
+		<!-- SIDEBAR (identik) -->
 		<aside class="sidebar">
 			<div class="sidebar-header">
 				<div class="sidebar-logo">
-					<!-- Logo mark -->
 					<svg width="32" height="32" viewBox="0 0 32 32" fill="none">
 						<rect width="32" height="32" rx="10" fill="#185adb"/>
 						<path d="M8 16 C8 11, 13 7, 16 7 C19 7, 24 11, 24 16 C24 21, 19 25, 16 25 C13 25, 8 21, 8 16Z" stroke="white" stroke-width="2" fill="none"/>
@@ -31,7 +31,6 @@
 				<ul>
 					<li class="{% if active_page == 'dashboard' %}active{% endif %}">
 						<a href="{{ url_for('main.dashboard') }}">
-							<!-- Dashboard icon -->
 							<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<rect x="3" y="3" width="7" height="7" rx="1"/>
 								<rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -43,7 +42,6 @@
 					</li>
 					<li class="{% if active_page == 'progress' %}active{% endif %}">
 						<a href="{{ url_for('main.progress') }}">
-							<!-- Progress / chart icon -->
 							<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
 							</svg>
@@ -52,7 +50,6 @@
 					</li>
 					<li class="{% if active_page == 'user' %}active{% endif %}">
 						<a href="{{ url_for('main.user_profile') }}">
-							<!-- User icon -->
 							<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 								<circle cx="12" cy="8" r="4"/>
 								<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -63,7 +60,6 @@
 				</ul>
 			</nav>
 
-			<!-- LOGOUT BUTTON -->
 			<div class="sidebar-footer">
 				<a href="{{ url_for('main.logout') }}" class="logout-btn">
 					<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -86,7 +82,7 @@
 				</div>
 				<div class="topbar-user">
 					<div class="topbar-avatar">
-						{{ nama_anak[0] | upper }}
+						{{ nama_anak[0] | upper if nama_anak else 'U' }}
 					</div>
 					<span class="topbar-name">{{ nama_anak }}</span>
 				</div>
@@ -94,64 +90,85 @@
 
 			<div class="dashboard-container">
 
-				<!-- WELCOME CARD -->
-				<div class="welcome-card">
-					<div class="welcome-text">
-						<h2>Selamat Datang, <span>{{ nama_anak }}</span>! 👋</h2>
-						<p>Lihat perkembangan dan statistik permainan kamu di sini.</p>
-					</div>
-					<div class="welcome-illustration">
-						<svg width="90" height="90" viewBox="0 0 90 90" fill="none">
-							<circle cx="45" cy="45" r="42" fill="rgba(255,255,255,0.15)"/>
-							<circle cx="45" cy="45" r="28" fill="rgba(255,255,255,0.2)"/>
-							<path d="M45 25 C45 25, 55 35, 55 45 C55 55, 45 65, 45 65 C45 65, 35 55, 35 45 C35 35, 45 25, 45 25Z" fill="rgba(255,255,255,0.4)"/>
-							<circle cx="45" cy="45" r="8" fill="white"/>
-						</svg>
+				<!-- PAGE HEADER -->
+				<div class="page-header">
+					<div class="page-header-text">
+						<h2 class="page-title">Profil Pengguna</h2>
+						<p class="page-subtitle">Informasi akun dan data diri kamu</p>
 					</div>
 				</div>
 
-				<!-- STATS -->
-				<p class="section-label">Statistik Kamu</p>
-				<div class="dashboard-stats">
+				<!-- PROFILE LAYOUT -->
+				<div class="user-layout">
 
-					<div class="stat-card">
-						<div class="stat-icon-wrap stat-icon-blue">
-							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#185adb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-							</svg>
+					<!-- LEFT: Profile Card -->
+					<div class="user-profile-card">
+						<!-- Banner dekorasi atas kartu -->
+						<div class="profile-card-banner">
+							<!-- Lingkaran dekoratif -->
+							<div class="banner-circle banner-circle-1"></div>
+							<div class="banner-circle banner-circle-2"></div>
+							<div class="banner-circle banner-circle-3"></div>
 						</div>
-						<div class="stat-info">
-							<span class="stat-label">Sesi Diselesaikan</span>
-							<span class="stat-value">{{ total_sesi }}</span>
+
+						<!-- Avatar inisial -->
+						<div class="user-avatar">
+							{{ nama_anak[0] | upper if nama_anak else 'U' }}
+						</div>
+
+						<div class="user-profile-info">
+							<div class="user-profile-name">{{ nama_anak }}</div>
+							<div class="user-profile-age-badge">
+								<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="12" cy="12" r="10"/>
+									<polyline points="12 6 12 12 16 14"/>
+								</svg>
+								{{ umur_anak }} Tahun
+							</div>
 						</div>
 					</div>
 
-					<div class="stat-card">
-						<div class="stat-icon-wrap stat-icon-indigo">
-							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4361ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-								<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-							</svg>
-						</div>
-						<div class="stat-info">
-							<span class="stat-label">Total Skor</span>
-							<span class="stat-value">{{ total_skor }}</span>
-						</div>
-					</div>
+					<!-- RIGHT: Info Cards -->
+					<div class="user-info-grid">
 
+						<div class="info-card">
+							<div class="info-card-icon icon-blue">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#185adb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="12" cy="8" r="4"/>
+									<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+								</svg>
+							</div>
+							<div class="info-card-body">
+								<p class="info-card-label">Nama Anak</p>
+								<p class="info-card-value">{{ nama_anak }}</p>
+							</div>
+						</div>
+
+						<div class="info-card">
+							<div class="info-card-icon icon-indigo">
+								<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4361ee" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="12" cy="12" r="10"/>
+									<polyline points="12 6 12 12 16 14"/>
+								</svg>
+							</div>
+							<div class="info-card-body">
+								<p class="info-card-label">Usia</p>
+								<p class="info-card-value">{{ umur_anak }} Tahun</p>
+							</div>
+						</div>
+
+					</div>
 				</div>
 
 			</div>
 		</main>
-
 	</div>
 
 	<script>
-		// Tanggal hari ini
 		const dateEl = document.getElementById('currentDate');
 		if (dateEl) {
-			const now = new Date();
 			const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-			dateEl.textContent = now.toLocaleDateString('id-ID', opts);
+			dateEl.textContent = new Date().toLocaleDateString('id-ID', opts);
 		}
 	</script>
 </body>

@@ -1,124 +1,346 @@
-body {
-	margin: 0;
-	padding: 0;
-	font-family: 'Inter', Arial, sans-serif;
-	background: #f5f8fc;
+/* ── Variables (serasi dengan dashboard) ─────────────────────── */
+:root {
+	--blue:       #185adb;
+	--blue-dark:  #0f3fa8;
+	--blue-light: #dce8ff;
+	--indigo:     #4361ee;
+	--bg:         #f0f4ff;
+	--surface:    #ffffff;
+	--border:     #e2e8f7;
+	--text-main:  #1a2340;
+	--text-muted: #7b8ab4;
+	--error-bg:   #fff1f1;
+	--error-border:#fca5a5;
+	--error-text: #b91c1c;
+	--radius-lg:  20px;
+	--radius-md:  12px;
+	--radius-sm:  8px;
+	--shadow-md:  0 6px 24px rgba(24, 90, 219, 0.13);
+	--transition: 0.2s ease;
 }
 
-.container {
+/* ── Reset ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+	font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+	background: var(--bg);
+	color: var(--text-main);
+	min-height: 100vh;
+}
+
+a { text-decoration: none; color: inherit; }
+
+/* ── Layout: dua kolom ───────────────────────────────────────── */
+.auth-wrapper {
 	display: flex;
 	min-height: 100vh;
 }
 
-.register-section {
+/* ── Panel Kiri (Form) ───────────────────────────────────────── */
+.form-panel {
 	flex: 1;
 	display: flex;
-	flex-direction: column;
+	align-items: center;
 	justify-content: center;
-	padding: 0 60px;
-	background: linear-gradient(90deg, #fff 70%, #f5f8fc 100%);
+	background: var(--surface);
+	padding: 48px 40px;
 }
 
-.register-title {
-	color: #185adb;
-	font-size: 2rem;
+.form-inner {
+	width: 100%;
+	max-width: 420px;
+}
+
+/* Brand / Logo */
+.brand-mark {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 	margin-bottom: 32px;
-	font-weight: 700;
 }
 
+.brand-name {
+	font-size: 1.3rem;
+	font-weight: 800;
+	color: var(--blue);
+	letter-spacing: 1.5px;
+}
+
+/* Judul form */
+.form-title {
+	font-size: 1.7rem;
+	font-weight: 800;
+	color: var(--text-main);
+	margin-bottom: 6px;
+	line-height: 1.2;
+}
+
+.form-subtitle {
+	font-size: 0.92rem;
+	color: var(--text-muted);
+	font-weight: 500;
+	margin-bottom: 28px;
+}
+
+/* ── Alert Error ─────────────────────────────────────────────── */
+.alert {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 14px 16px;
+	border-radius: var(--radius-md);
+	margin-bottom: 22px;
+	animation: slideDown 0.3s ease both;
+}
+
+.alert-error {
+	background: var(--error-bg);
+	border: 1.5px solid var(--error-border);
+	color: var(--error-text);
+}
+
+.alert-icon {
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+
+.alert-msg {
+	flex: 1;
+	font-size: 0.9rem;
+	font-weight: 600;
+	line-height: 1.5;
+}
+
+.alert-close {
+	flex-shrink: 0;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--error-text);
+	opacity: 0.6;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	transition: opacity var(--transition);
+}
+
+.alert-close:hover { opacity: 1; }
+
+@keyframes slideDown {
+	from { opacity: 0; transform: translateY(-10px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Form Fields ─────────────────────────────────────────────── */
 .register-form {
 	display: flex;
 	flex-direction: column;
-	gap: 16px;
+	gap: 18px;
 }
 
-.register-form label {
-	font-size: 1rem;
-	color: #222;
-	margin-bottom: 4px;
+.field-group {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.field-group label {
+	font-size: 0.88rem;
+	font-weight: 700;
+	color: var(--text-main);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.field-hint {
+	font-size: 0.78rem;
+	font-weight: 500;
+	color: var(--text-muted);
+	background: var(--blue-light);
+	padding: 2px 8px;
+	border-radius: 99px;
+}
+
+/* Input dengan ikon di kiri */
+.input-wrap {
+	position: relative;
+}
+
+.input-icon {
+	position: absolute;
+	left: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 16px;
+	height: 16px;
+	stroke: var(--text-muted);
+	pointer-events: none;
+	transition: stroke var(--transition);
+}
+
+.input-wrap input {
+	width: 100%;
+	padding: 12px 16px 12px 42px;
+	border: 1.5px solid var(--border);
+	border-radius: var(--radius-sm);
+	background: var(--bg);
+	font-size: 0.93rem;
+	font-family: inherit;
+	font-weight: 500;
+	color: var(--text-main);
+	outline: none;
+	transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.input-wrap input::placeholder {
+	color: var(--text-muted);
+	font-weight: 400;
+}
+
+.input-wrap input:focus {
+	border-color: var(--blue);
+	background: var(--surface);
+	box-shadow: 0 0 0 3px rgba(24, 90, 219, 0.12);
+}
+
+.input-wrap input:focus + .input-icon,
+.input-wrap:focus-within .input-icon {
+	stroke: var(--blue);
+}
+
+/* ── Submit Button ───────────────────────────────────────────── */
+.submit-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	width: 100%;
+	padding: 13px 0;
+	margin-top: 6px;
+	background: linear-gradient(135deg, var(--blue) 0%, var(--indigo) 100%);
+	color: #fff;
+	border: none;
+	border-radius: var(--radius-sm);
+	font-size: 0.97rem;
+	font-weight: 700;
+	font-family: inherit;
+	cursor: pointer;
+	box-shadow: 0 4px 16px rgba(24, 90, 219, 0.30);
+	transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+}
+
+.submit-btn:hover {
+	opacity: 0.92;
+	transform: translateY(-1px);
+	box-shadow: 0 6px 20px rgba(24, 90, 219, 0.38);
+}
+
+.submit-btn:active {
+	transform: translateY(0);
+}
+
+/* ── Switch link ─────────────────────────────────────────────── */
+.switch-link {
+	margin-top: 24px;
+	text-align: center;
+	font-size: 0.9rem;
+	color: var(--text-muted);
 	font-weight: 500;
 }
 
-.register-form input {
-	padding: 12px 16px;
-	border: none;
-	border-radius: 8px;
-	background: #f3f4f6;
-	font-size: 1rem;
-	color: #222;
-	margin-bottom: 8px;
-	outline: none;
-	transition: box-shadow 0.2s;
+.switch-link a {
+	color: var(--blue);
+	font-weight: 700;
+	transition: color var(--transition);
 }
 
-.register-form input:focus {
-	box-shadow: 0 0 0 2px #185adb33;
-}
+.switch-link a:hover { color: var(--blue-dark); }
 
-.register-btn {
-	background: #185adb;
-	color: #fff;
-	border: none;
-	border-radius: 8px;
-	padding: 12px 0;
-	font-size: 1rem;
-	font-weight: 600;
-	cursor: pointer;
-	margin-top: 12px;
-	transition: background 0.2s;
-}
-
-.register-btn:hover {
-	background: #163fa0;
-}
-
-.login-link {
-	margin-top: 24px;
-	text-align: center;
-	color: #222;
-	font-size: 1rem;
-}
-
-.login-link a {
-	color: #185adb;
-	font-weight: 600;
-	text-decoration: none;
-}
-
-.side-section {
+/* ── Panel Kanan (Dekorasi) ──────────────────────────────────── */
+.deco-panel {
 	flex: 1;
+	background: linear-gradient(140deg, var(--blue) 0%, var(--indigo) 100%);
 	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background: #eaf3fb;
 	overflow: hidden;
+	padding: 48px 40px;
 }
 
-.side-bg {
+/* Lingkaran dekoratif latar */
+.deco-circle {
 	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: url('../reference/daftar_proto.png') no-repeat center center/cover;
-	opacity: 0.15;
-	z-index: 1;
+	border-radius: 50%;
+	background: rgba(255,255,255,0.08);
 }
 
-.side-content {
+.deco-c1 { width: 420px; height: 420px; top: -120px; right: -100px; }
+.deco-c2 { width: 260px; height: 260px; bottom: -60px; left: -60px; }
+.deco-c3 { width: 140px; height: 140px; top: 60%; left: 55%; background: rgba(255,255,255,0.05); }
+
+/* Konten dekorasi */
+.deco-content {
 	position: relative;
 	z-index: 2;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	height: 100%;
+	max-width: 360px;
+	color: #fff;
 }
 
-.brand {
-	font-size: 3rem;
+.deco-illustration {
+	margin-bottom: 28px;
+}
+
+.deco-title {
+	font-size: 1.7rem;
 	font-weight: 700;
-	color: #185adb;
-	letter-spacing: 2px;
+	line-height: 1.3;
+	margin-bottom: 14px;
+	color: rgba(255,255,255,0.95);
+}
+
+.deco-title strong {
+	font-weight: 800;
+	color: #fff;
+}
+
+.deco-desc {
+	font-size: 0.95rem;
+	font-weight: 500;
+	color: rgba(255,255,255,0.72);
+	line-height: 1.7;
+	margin-bottom: 28px;
+}
+
+/* Poin fitur */
+.deco-features {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.deco-features li {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: rgba(255,255,255,0.85);
+}
+
+.feat-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #ffe066;
+	flex-shrink: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 820px) {
+	.deco-panel { display: none; }
+	.form-panel { padding: 40px 24px; }
 }

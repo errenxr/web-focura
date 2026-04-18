@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
-from .models import create_user, verify_user, get_user_sessions, create_session, end_session
+from .models import create_user, get_user_by_id, verify_user, get_user_sessions, create_session, end_session
 
 ACTIVE_USER = None
 
@@ -12,8 +12,13 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
 
+        # Validasi field kosong
         if not email or not password:
-            return "Email dan password harus diisi!"
+            return render_template(
+                "login.html",
+                error="Email dan password harus diisi!",
+                form_email=email
+            )
 
         user = verify_user(email, password)
 
@@ -25,9 +30,13 @@ def login():
             ACTIVE_USER = user
             return redirect(url_for("main.dashboard"))
         else:
-            return "Login gagal!"
+            return render_template(
+                "login.html",
+                error="Email atau password yang Anda masukkan salah.",
+                form_email=email
+            )
 
-    return render_template("login.html")
+    return render_template("login.html", error=None, form_email="")
 
 
 @main.route("/register", methods=["GET", "POST"])
@@ -38,14 +47,36 @@ def register():
         nama_anak = request.form.get("nama_anak")
         umur = request.form.get("umur")
 
+        # Validasi field kosong
         if not email or not password or not nama_anak or not umur:
-            return "Semua field harus diisi!"
+            return render_template(
+                "registrasi.html",
+                error="Semua field harus diisi!",
+                form_data={"email": email, "nama_anak": nama_anak, "umur": umur}
+            )
+
+        # Validasi umur berupa angka
+        try:
+            umur = int(umur)
+        except ValueError:
+            return render_template(
+                "registrasi.html",
+                error="Umur harus berupa angka!",
+                form_data={"email": email, "nama_anak": nama_anak, "umur": ""}
+            )
+
+        # Validasi rentang umur
+        if umur < 5 or umur > 7:
+            return render_template(
+                "registrasi.html",
+                error="Pendaftaran hanya untuk anak usia 5–7 tahun!",
+                form_data={"email": email, "nama_anak": nama_anak, "umur": umur}
+            )
 
         create_user(email, password, nama_anak, umur)
-
         return redirect(url_for("main.login"))
 
-    return render_template("registrasi.html")
+    return render_template("registrasi.html", error=None, form_data={})
 
 
 @main.route("/dashboard")
@@ -68,18 +99,32 @@ def dashboard():
         total_skor=total_skor
     )
 
+
 @main.route("/progress")
 def progress():
     if "user_id" not in session:
         return redirect(url_for("main.login"))
 
     user_id = session["user_id"]
-
     sessions = get_user_sessions(user_id)
 
+    return render_template("progress.html", sessions=sessions)
+
+
+@main.route("/user")
+def user_profile():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    user_id = session["user_id"]
+    user = get_user_by_id(user_id)
+
     return render_template(
-        "progress.html",
-        sessions=sessions
+        "user.html",
+        user=user,
+        nama_anak=user["nama_anak"],
+        umur_anak=user["umur"],
+        active_page="user"
     )
 
 
@@ -101,22 +146,15 @@ def api_start_session():
 def api_end_session():
     session_id = request.json.get("session_id")
     skor = request.json.get("skor")
-
     end_session(session_id, skor)
-
     return jsonify({"status": "success"})
+
 
 @main.route("/api/get_active_user", methods=["GET"])
 def get_active_user():
     global ACTIVE_USER
 
     if ACTIVE_USER:
-        return jsonify({
-            "status": "success",
-            "user": ACTIVE_USER
-        })
+        return jsonify({"status": "success", "user": ACTIVE_USER})
     else:
-        return jsonify({
-            "status": "error",
-            "message": "Tidak ada user aktif"
-        })
+        return jsonify({"status": "error", "message": "Tidak ada user aktif"})

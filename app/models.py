@@ -52,6 +52,24 @@ def get_user_by_email(email):
 
     return user
 
+def get_user_by_id(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    query = """
+    SELECT id, email, nama_anak, umur
+    FROM users
+    WHERE id = %s
+    """
+
+    cursor.execute(query, (user_id,))
+    user = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    return user
+
 
 def verify_user(email, password):
     user = get_user_by_email(email)

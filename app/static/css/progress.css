@@ -1,59 +1,308 @@
-body {
-	font-family: 'Inter', Arial, sans-serif;
-	background: #f5f8fc;
+/* ── Progress Page Styles ────────────────────────────────────────
+   Extends dashboard.css. Variables diwarisi dari dashboard.css.
+   ─────────────────────────────────────────────────────────────── */
+
+/* ── Page Header ─────────────────────────────────────────────── */
+.page-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-bottom: 24px;
+	animation: fadeUp 0.4s ease both;
 }
 
-.progress-table-wrapper {
-	background: #fff;
-	border-radius: 16px;
-	box-shadow: 0 2px 8px rgba(24,90,219,0.04);
-	padding: 32px 24px;
-	margin-top: 24px;
-	overflow-x: auto;
+.page-title {
+	font-size: 1.45rem;
+	font-weight: 800;
+	color: var(--text-main);
+	margin-bottom: 4px;
 }
 
-.progress-table {
-	width: 100%;
-	border-collapse: collapse;
-	min-width: 700px;
-}
-
-.progress-table thead tr {
-	background: #e3ecfa;
-}
-
-.progress-table th, .progress-table td {
-	padding: 14px 12px;
-	text-align: left;
-	font-size: 1rem;
-}
-
-.progress-table th {
-	color: #185adb;
-	font-weight: 700;
-	border-bottom: 2px solid #dbeafe;
-}
-
-.progress-table tbody tr {
-	border-bottom: 1px solid #f0f4fa;
-	transition: background 0.2s;
-}
-
-.progress-table tbody tr:hover {
-	background: #f3f7fd;
-}
-
-.progress-table td {
-	color: #222;
+.page-subtitle {
+	font-size: 0.9rem;
+	color: var(--text-muted);
 	font-weight: 500;
 }
 
+.page-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	background: var(--blue-light);
+	color: var(--blue);
+	font-size: 0.85rem;
+	font-weight: 700;
+	padding: 8px 16px;
+	border-radius: 999px;
+	border: 1.5px solid #c5d9f8;
+	white-space: nowrap;
+}
+
+/* ── Table Wrapper ───────────────────────────────────────────── */
+.progress-table-wrapper {
+	background: var(--surface);
+	border-radius: var(--radius-lg);
+	border: 1.5px solid var(--border);
+	box-shadow: var(--shadow-sm);
+	overflow-x: auto;
+	animation: fadeUp 0.45s ease 0.08s both;
+}
+
+/* ── Table Toolbar ───────────────────────────────────────────── */
+.table-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	padding: 16px 20px 14px;
+	border-bottom: 1.5px solid var(--border);
+}
+
+.rows-per-page {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.rows-label {
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: var(--text-muted);
+}
+
+.rows-select {
+	appearance: none;
+	-webkit-appearance: none;
+	background: var(--bg)
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237b8ab4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")
+		no-repeat right 10px center;
+	border: 1.5px solid var(--border);
+	border-radius: var(--radius-sm);
+	padding: 5px 30px 5px 12px;
+	font-size: 0.85rem;
+	font-weight: 600;
+	font-family: inherit;
+	color: var(--text-main);
+	cursor: pointer;
+	transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.rows-select:focus {
+	outline: none;
+	border-color: var(--blue);
+	box-shadow: 0 0 0 3px rgba(24, 90, 219, 0.12);
+}
+
+.table-info {
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: var(--text-muted);
+}
+
+/* ── Table ───────────────────────────────────────────────────── */
+.progress-table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 660px;
+}
+
+.progress-table thead tr {
+	background: #f4f8ff;
+	border-bottom: 2px solid var(--border);
+}
+
+.progress-table th {
+	padding: 15px 18px;
+	text-align: left;
+	font-size: 0.78rem;
+	font-weight: 700;
+	letter-spacing: 0.9px;
+	text-transform: uppercase;
+	color: var(--text-muted);
+	white-space: nowrap;
+}
+
+.progress-table th:first-child,
+.progress-table td:first-child {
+	text-align: center;
+	width: 56px;
+}
+
+.progress-table tbody tr {
+	border-bottom: 1px solid var(--border);
+	transition: background var(--transition);
+}
+
+.progress-table tbody tr:last-child {
+	border-bottom: none;
+}
+
+.progress-table tbody tr:hover {
+	background: #f7faff;
+}
+
+.progress-table td {
+	padding: 14px 18px;
+	font-size: 0.92rem;
+	font-weight: 500;
+	color: var(--text-main);
+	vertical-align: middle;
+}
+
+/* ── Row Number Badge ────────────────────────────────────────── */
+.row-num {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	background: var(--bg);
+	border-radius: 50%;
+	font-size: 0.82rem;
+	font-weight: 700;
+	color: var(--text-muted);
+}
+
+/* ── Session ID ──────────────────────────────────────────────── */
+.session-id {
+	font-family: 'Courier New', monospace;
+	font-size: 0.83rem;
+	color: var(--text-muted);
+	background: var(--bg);
+	padding: 3px 8px;
+	border-radius: 6px;
+}
+
+/* ── Score Pill ──────────────────────────────────────────────── */
+.score-pill {
+	display: inline-block;
+	padding: 4px 14px;
+	border-radius: 999px;
+	font-size: 0.88rem;
+	font-weight: 700;
+}
+
+.score-high { background: #d1fae5; color: #065f46; }
+.score-mid  { background: #fef9c3; color: #854d0e; }
+.score-low  { background: #fee2e2; color: #991b1b; }
+
+/* ── Empty State ─────────────────────────────────────────────── */
+.empty-state {
+	text-align: center;
+	padding: 56px 24px !important;
+	color: var(--text-muted);
+}
+
+.empty-state p {
+	font-size: 0.95rem;
+	font-weight: 500;
+	margin-top: 4px;
+}
+
+/* ── Pagination Bar ──────────────────────────────────────────── */
+.pagination-bar {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 16px 20px;
+	border-top: 1.5px solid var(--border);
+	flex-wrap: wrap;
+}
+
+/* Tombol nomor halaman */
+.page-btn {
+	min-width: 36px;
+	height: 36px;
+	padding: 0 10px;
+	border: 1.5px solid var(--border);
+	border-radius: var(--radius-sm);
+	background: var(--surface);
+	color: var(--text-main);
+	font-size: 0.88rem;
+	font-weight: 600;
+	font-family: inherit;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: background var(--transition), border-color var(--transition),
+	            color var(--transition), box-shadow var(--transition);
+}
+
+.page-btn:hover:not(:disabled) {
+	background: var(--blue-light);
+	border-color: var(--blue);
+	color: var(--blue);
+}
+
+.page-btn.active {
+	background: var(--blue);
+	border-color: var(--blue);
+	color: #fff;
+	box-shadow: 0 3px 10px rgba(24, 90, 219, 0.28);
+	cursor: default;
+}
+
+/* Tombol Prev / Next (ikon panah) */
+.nav-btn {
+	width: 36px;
+	height: 36px;
+	padding: 0;
+	border: 1.5px solid var(--border);
+	border-radius: var(--radius-sm);
+	background: var(--surface);
+	color: var(--text-muted);
+	font-family: inherit;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: background var(--transition), border-color var(--transition),
+	            color var(--transition);
+}
+
+.nav-btn:hover:not(:disabled) {
+	background: var(--blue-light);
+	border-color: var(--blue);
+	color: var(--blue);
+}
+
+.nav-btn:disabled {
+	opacity: 0.38;
+	cursor: not-allowed;
+}
+
+/* Ellipsis "…" */
+.page-ellipsis {
+	min-width: 36px;
+	height: 36px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.9rem;
+	color: var(--text-muted);
+	user-select: none;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 900px) {
-	.progress-table-wrapper {
-		padding: 16px 4px;
+	.progress-table th,
+	.progress-table td {
+		padding: 12px 12px;
+		font-size: 0.88rem;
 	}
-	.progress-table th, .progress-table td {
-		padding: 10px 6px;
-		font-size: 0.95rem;
+
+	.page-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.table-toolbar {
+		flex-direction: column;
+		align-items: flex-start;
 	}
 }
