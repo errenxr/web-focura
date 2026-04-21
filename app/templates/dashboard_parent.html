@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard Orang Tua - FOCURA</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard_parent.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/anak.css') }}">
+</head>
+<body>
+	<div class="dashboard-wrapper">
+
+		<!-- ── SIDEBAR ─────────────────────────────────────────── -->
+		<aside class="sidebar">
+			<div class="sidebar-header">
+				<div class="sidebar-logo">
+					<svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+						<rect width="32" height="32" rx="10" fill="#185adb"/>
+						<path d="M8 16 C8 11, 13 7, 16 7 C19 7, 24 11, 24 16 C24 21, 19 25, 16 25 C13 25, 8 21, 8 16Z"
+						      stroke="white" stroke-width="2" fill="none"/>
+						<circle cx="16" cy="16" r="3" fill="white"/>
+					</svg>
+					<span class="sidebar-title">FOCURA</span>
+				</div>
+			</div>
+
+			<nav class="sidebar-nav">
+				<p class="nav-section-label">MENU</p>
+				<ul>
+					<li class="{% if active_page == 'dashboard_parent' %}active{% endif %}">
+						<a href="{{ url_for('main.dashboard_parent') }}">
+							<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+							     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<rect x="3" y="3" width="7" height="7" rx="1"/>
+								<rect x="14" y="3" width="7" height="7" rx="1"/>
+								<rect x="3" y="14" width="7" height="7" rx="1"/>
+								<rect x="14" y="14" width="7" height="7" rx="1"/>
+							</svg>
+							Dashboard
+						</a>
+					</li>
+					<li class="{% if active_page == 'anak' %}active{% endif %}">
+						<a href="{{ url_for('main.daftar_anak') }}">
+							<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+							     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<circle cx="9" cy="7" r="4"/>
+								<path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+								<line x1="19" y1="8" x2="19" y2="14"/>
+								<line x1="16" y1="11" x2="22" y2="11"/>
+							</svg>
+							Anak
+						</a>
+					</li>
+				</ul>
+			</nav>
+
+			<div class="sidebar-footer">
+				<a href="{{ url_for('main.logout') }}" class="logout-btn">
+					<svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+					     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+						<polyline points="16 17 21 12 16 7"/>
+						<line x1="21" y1="12" x2="9" y2="12"/>
+					</svg>
+					Logout
+				</a>
+			</div>
+		</aside>
+
+		<!-- ── MAIN CONTENT ────────────────────────────────────── -->
+		<main class="dashboard-main">
+
+			<div class="topbar">
+				<p class="topbar-date" id="currentDate"></p>
+				<div class="topbar-user">
+					<div class="topbar-avatar">{{ nama_ortu[0] | upper if nama_ortu else 'O' }}</div>
+					<span class="topbar-name">{{ nama_ortu }}</span>
+				</div>
+			</div>
+
+			<div class="dashboard-container">
+
+				<div class="welcome-card">
+					<div class="welcome-text">
+						<h2>Halo, <span>{{ nama_ortu }}</span>! 👋</h2>
+						<p>Pantau perkembangan dan daftarkan anak Anda di sini.</p>
+					</div>
+					<div class="welcome-illustration">
+						<svg width="88" height="88" viewBox="0 0 88 88" fill="none">
+							<circle cx="44" cy="44" r="40" fill="rgba(255,255,255,0.12)"/>
+							<circle cx="44" cy="44" r="26" fill="rgba(255,255,255,0.16)"/>
+							<circle cx="36" cy="30" r="7" fill="rgba(255,255,255,0.55)"/>
+							<path d="M24 56c0-6 5.4-10 12-10s12 4 12 10" fill="rgba(255,255,255,0.45)"/>
+							<circle cx="56" cy="34" r="5" fill="rgba(255,255,255,0.40)"/>
+							<path d="M47 56c0-4.5 4-8 9-8s9 3.5 9 8" fill="rgba(255,255,255,0.30)"/>
+							<circle cx="42" cy="66" r="3" fill="rgba(255,214,102,0.8)"/>
+						</svg>
+					</div>
+				</div>
+
+				<div class="stats-row">
+					<div>
+						<p class="section-label">Ringkasan</p>
+						<div class="stat-cards">
+							<div class="stat-card">
+								<div class="stat-icon-wrap stat-icon-blue">
+									<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+									     stroke="#185adb" stroke-width="2"
+									     stroke-linecap="round" stroke-linejoin="round">
+										<circle cx="9" cy="7" r="4"/>
+										<path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+										<line x1="19" y1="8" x2="19" y2="14"/>
+										<line x1="16" y1="11" x2="22" y2="11"/>
+									</svg>
+								</div>
+								<div class="stat-info">
+									<span class="stat-label">Anak Terdaftar</span>
+									<span class="stat-value">{{ jumlah_anak }}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<button class="register-child-btn" id="openModalBtn">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+						     stroke="currentColor" stroke-width="2.5"
+						     stroke-linecap="round" stroke-linejoin="round">
+							<line x1="12" y1="5" x2="12" y2="19"/>
+							<line x1="5" y1="12" x2="19" y2="12"/>
+						</svg>
+						Daftarkan Anak
+					</button>
+				</div>
+			</div>
+		</main>
+	</div>
+
+	<!-- ══ MODAL: Daftarkan Anak ═════════════════════════════════ -->
+	<div class="modal-overlay" id="modalOverlay">
+		<div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+			<div class="modal-header">
+				<div class="modal-title-wrap">
+					<div class="modal-icon">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+						     stroke="#185adb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="9" cy="7" r="4"/>
+							<path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+							<line x1="19" y1="8" x2="19" y2="14"/>
+							<line x1="16" y1="11" x2="22" y2="11"/>
+						</svg>
+					</div>
+					<div>
+						<h3 class="modal-title" id="modalTitle">Daftarkan Anak</h3>
+						<p class="modal-subtitle">Isi data anak untuk membuat akun baru</p>
+					</div>
+				</div>
+				<button class="modal-close" id="closeModalBtn" aria-label="Tutup modal">
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+					     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				</button>
+			</div>
+			<form class="modal-form" method="POST" action="{{ url_for('main.register_anak') }}" novalidate>
+				<div class="field-group">
+					<label for="nama_anak">Nama Lengkap Anak</label>
+					<div class="input-wrap">
+						<svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+						     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+						</svg>
+						<input type="text" id="nama_anak" name="nama_anak"
+						       placeholder="Nama lengkap anak" required>
+					</div>
+				</div>
+				<div class="field-group">
+					<label for="umur">Umur <span class="field-hint">5–7 tahun</span></label>
+					<div class="input-wrap">
+						<svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+						     stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+						</svg>
+						<input type="number" id="umur" name="umur"
+						       placeholder="Usia anak (5–7)" min="5" max="7" required>
+					</div>
+				</div>
+				<div class="modal-actions">
+					<button type="button" class="btn-cancel" id="cancelModalBtn">Batal</button>
+					<button type="submit" class="btn-submit">
+						Daftarkan
+						<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+						     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+						</svg>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- ══ TOAST CONTAINER ═══════════════════════════════════════ -->
+	<div class="toast-container" id="toastContainer">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% for category, message in messages %}
+			<div class="toast toast-{{ category }}" data-toast>
+				<div class="toast-icon">
+					{% if category == 'success' %}
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+					     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+						<polyline points="22 4 12 14.01 9 11.01"/>
+					</svg>
+					{% else %}
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+					     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="12" cy="12" r="10"/>
+						<line x1="12" y1="8" x2="12" y2="12"/>
+						<line x1="12" y1="16" x2="12.01" y2="16"/>
+					</svg>
+					{% endif %}
+				</div>
+				<p class="toast-msg">{{ message }}</p>
+				<button class="toast-close" onclick="dismissToast(this.closest('[data-toast]'))" aria-label="Tutup">
+					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+					     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+						<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+					</svg>
+				</button>
+			</div>
+			{% endfor %}
+		{% endwith %}
+	</div>
+
+	<script>
+		/* Tanggal */
+		const dateEl = document.getElementById('currentDate');
+		if (dateEl) {
+			const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+			dateEl.textContent = new Date().toLocaleDateString('id-ID', opts);
+		}
+
+		/* Toast */
+		function dismissToast(toast) {
+			toast.classList.add('toast-hide');
+			setTimeout(() => toast.remove(), 350);
+		}
+		document.querySelectorAll('[data-toast]').forEach((t, i) => {
+			setTimeout(() => { if (document.body.contains(t)) dismissToast(t); }, 4000 + i * 300);
+		});
+
+		/* Modal */
+		const overlay   = document.getElementById('modalOverlay');
+		const openBtn   = document.getElementById('openModalBtn');
+		const closeBtn  = document.getElementById('closeModalBtn');
+		const cancelBtn = document.getElementById('cancelModalBtn');
+
+		function openModal()  { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+		function closeModal() { overlay.classList.remove('active'); document.body.style.overflow = ''; }
+
+		openBtn.addEventListener('click', openModal);
+		closeBtn.addEventListener('click', closeModal);
+		cancelBtn.addEventListener('click', closeModal);
+		overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+		document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+	</script>
+</body>
+</html>

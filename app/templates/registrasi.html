@@ -76,42 +76,6 @@
 					</div>
 
 					<div class="field-group">
-						<label for="nama">Nama Anak</label>
-						<div class="input-wrap">
-							<svg class="input-icon" viewBox="0 0 24 24" fill="none"
-							     stroke="currentColor" stroke-width="2"
-							     stroke-linecap="round" stroke-linejoin="round">
-								<circle cx="12" cy="8" r="4"/>
-								<path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-							</svg>
-							<input type="text" id="nama" name="nama_anak"
-							       placeholder="Nama lengkap anak"
-							       value="{{ form_data.get('nama_anak', '') if form_data else '' }}"
-							       required>
-						</div>
-					</div>
-
-					<div class="field-group">
-						<label for="umur">
-							Umur
-							<span class="field-hint">(5–7 tahun)</span>
-						</label>
-						<div class="input-wrap">
-							<svg class="input-icon" viewBox="0 0 24 24" fill="none"
-							     stroke="currentColor" stroke-width="2"
-							     stroke-linecap="round" stroke-linejoin="round">
-								<circle cx="12" cy="12" r="10"/>
-								<polyline points="12 6 12 12 16 14"/>
-							</svg>
-							<input type="number" id="umur" name="umur"
-							       placeholder="Usia anak (5–7)"
-							       min="5" max="7"
-							       value="{{ form_data.get('umur', '') if form_data else '' }}"
-							       required>
-						</div>
-					</div>
-
-					<div class="field-group">
 						<label for="password">Password</label>
 						<div class="input-wrap">
 							<svg class="input-icon" viewBox="0 0 24 24" fill="none"

@@ -1,7 +1,6 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, jsonify
-from .models import create_user, get_user_by_id, verify_user, get_user_sessions, create_session, end_session
+from flask import Blueprint, flash, render_template, request, redirect, url_for, session, jsonify
+from .models import create_anak, create_user, get_user_by_id, verify_user, get_anak_by_user, get_anak_by_id, create_session, end_session, get_sessions_by_anak, update_anak, delete_anak
 
-ACTIVE_USER = None
 
 main = Blueprint('main', __name__)
 
@@ -24,11 +23,9 @@ def login():
 
         if user:
             session["user_id"] = user["id"]
-            session["nama_anak"] = user["nama_anak"]
+            session["email"] = user["email"]
 
-            global ACTIVE_USER
-            ACTIVE_USER = user
-            return redirect(url_for("main.dashboard"))
+            return redirect(url_for("main.dashboard_parent"))
         else:
             return render_template(
                 "login.html",
@@ -44,71 +41,178 @@ def register():
     if request.method == "POST":
         email = request.form.get("email")
         password = request.form.get("password")
-        nama_anak = request.form.get("nama_anak")
-        umur = request.form.get("umur")
 
-        # Validasi field kosong
-        if not email or not password or not nama_anak or not umur:
+        if not email or not password:
             return render_template(
                 "registrasi.html",
-                error="Semua field harus diisi!",
-                form_data={"email": email, "nama_anak": nama_anak, "umur": umur}
+                error="Email dan password harus diisi!",
+                form_data={"email": email}
             )
 
-        # Validasi umur berupa angka
-        try:
-            umur = int(umur)
-        except ValueError:
-            return render_template(
-                "registrasi.html",
-                error="Umur harus berupa angka!",
-                form_data={"email": email, "nama_anak": nama_anak, "umur": ""}
-            )
+        create_user(email, password)
 
-        # Validasi rentang umur
-        if umur < 5 or umur > 7:
-            return render_template(
-                "registrasi.html",
-                error="Pendaftaran hanya untuk anak usia 5–7 tahun!",
-                form_data={"email": email, "nama_anak": nama_anak, "umur": umur}
-            )
-
-        create_user(email, password, nama_anak, umur)
         return redirect(url_for("main.login"))
 
     return render_template("registrasi.html", error=None, form_data={})
 
 
-@main.route("/dashboard")
-def dashboard():
+@main.route("/dashboard_parent")
+def dashboard_parent():
     if "user_id" not in session:
         return redirect(url_for("main.login"))
 
     user_id = session["user_id"]
-    nama_anak = session["nama_anak"]
 
-    sessions = get_user_sessions(user_id)
+    anak_list = get_anak_by_user(user_id)
+
+    return render_template(
+        "dashboard_parent.html",
+        nama_ortu=session.get("email"),  # bisa diganti nanti
+        anak_list=anak_list,
+        jumlah_anak=len(anak_list),
+        active_page="dashboard_parent"
+    )
+
+@main.route("/daftar_anak")
+def daftar_anak():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    user_id = session["user_id"]
+    anak_list = get_anak_by_user(user_id)
+
+    return render_template(
+        "anak.html",
+        anak_list=anak_list,
+        nama_ortu=session.get("email"),
+        active_page="anak"
+    )
+
+
+@main.route("/register_anak", methods=["POST"])
+def register_anak():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    user_id = session["user_id"]
+    nama_anak = request.form.get("nama_anak")
+    umur = request.form.get("umur")
+
+    if not nama_anak or not umur:
+        return "Semua field harus diisi!"
+
+    try:
+        umur = int(umur)
+    except:
+        return "Umur harus angka!"
+
+    if umur < 5 or umur > 7:
+        return "Umur anak harus antara 5 sampai 7 tahun!"
+
+    create_anak(user_id, nama_anak, umur)
+    flash(f"Anak '{nama_anak}' berhasil didaftarkan! 🎉", "success")
+    return redirect(url_for("main.daftar_anak"))
+
+@main.route("/edit_anak/<int:anak_id>", methods=["POST"])
+def edit_anak(anak_id):
+    anak = get_anak_by_id(anak_id)
+    if not anak or anak["user_id"] != session["user_id"]:
+        return "Akses tidak diizinkan!"
+    
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+ 
+    nama_anak = request.form.get("nama_anak")
+    umur      = request.form.get("umur")
+ 
+    if not nama_anak or not umur:
+        flash("Semua field harus diisi!", "error")
+        return redirect(url_for("main.daftar_anak"))
+ 
+    try:
+        umur = int(umur)
+    except ValueError:
+        flash("Umur harus berupa angka!", "error")
+        return redirect(url_for("main.daftar_anak"))
+ 
+    if umur < 5 or umur > 7:
+        flash("Usia anak harus antara 5–7 tahun!", "error")
+        return redirect(url_for("main.daftar_anak"))
+ 
+    
+    update_anak(anak_id, nama_anak, umur)
+ 
+    flash(f"Data '{nama_anak}' berhasil diperbarui! ✏️", "success")
+    return redirect(url_for("main.daftar_anak"))
+
+@main.route("/hapus_anak/<int:anak_id>", methods=["POST"])
+def hapus_anak(anak_id):
+    anak = get_anak_by_id(anak_id)
+    if not anak or anak["user_id"] != session["user_id"]:
+        return "Akses tidak diizinkan!"
+    
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+ 
+    # Ambil nama anak sebelum dihapus untuk pesan notifikasi
+    anak = get_anak_by_id(anak_id)
+    nama = anak["nama_anak"] if anak else "Anak"
+ 
+    delete_anak(anak_id)
+ 
+    flash(f"Data '{nama}' berhasil dihapus.", "success")
+    return redirect(url_for("main.daftar_anak"))
+
+@main.route("/dashboard_anak/<int:anak_id>")
+def dashboard_anak(anak_id):
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    user_id = session["user_id"]
+
+    anak = get_anak_by_id(anak_id)
+
+    if not anak or anak["user_id"] != user_id:
+        return "Akses tidak diizinkan!"
+
+    session["anak_id"] = anak["id"]
+    session["nama_anak"] = anak["nama_anak"]
+    session["umur"] = anak["umur"]
+
+    sessions = get_sessions_by_anak(anak_id)
 
     total_sesi = len(sessions)
     total_skor = sum(s["skor_total"] or 0 for s in sessions)
 
     return render_template(
         "dashboard.html",
-        nama_anak=nama_anak,
+        nama_anak=anak["nama_anak"],
+        umur_anak=anak["umur"],
         total_sesi=total_sesi,
-        total_skor=total_skor
+        total_skor=total_skor,
+        anak_id=anak_id,
+        active_page="dashboard"
     )
 
 
-@main.route("/progress")
-def progress():
+@main.route("/progress/<int:anak_id>")
+def progress_anak(anak_id):
     if "user_id" not in session:
         return redirect(url_for("main.login"))
 
     user_id = session["user_id"]
-    sessions = get_user_sessions(user_id)
+    anak = get_anak_by_id(anak_id)
 
-    return render_template("progress.html", sessions=sessions)
+    if not anak or anak["user_id"] != user_id:
+        return "Akses tidak diizinkan!"
+
+    sessions = get_sessions_by_anak(anak_id)
+
+    return render_template(
+        "progress.html",
+        sessions=sessions,
+        active_page="progress"
+    )
 
 
 @main.route("/user")
@@ -116,17 +220,40 @@ def user_profile():
     if "user_id" not in session:
         return redirect(url_for("main.login"))
 
-    user_id = session["user_id"]
-    user = get_user_by_id(user_id)
+    # Pastikan anak sudah dipilih
+    if "anak_id" not in session:
+        return redirect(url_for("main.dashboard_parent"))
+
+    anak_id = session["anak_id"]
+    anak = get_anak_by_id(anak_id)
+
+    if not anak:
+        return "Data anak tidak ditemukan!"
 
     return render_template(
         "user.html",
-        user=user,
-        nama_anak=user["nama_anak"],
-        umur_anak=user["umur"],
+        anak=anak,
+        nama_anak=anak["nama_anak"],
+        umur_anak=anak["umur"],
         active_page="user"
     )
 
+@main.route("/pilih_anak/<int:anak_id>")
+def pilih_anak(anak_id):
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    user_id = session["user_id"]
+    anak = get_anak_by_id(anak_id)
+
+    if not anak or anak["user_id"] != user_id:
+        return "Akses tidak diizinkan!"
+
+    session["anak_id"] = anak["id"]
+    session["nama_anak"] = anak["nama_anak"]
+    session["umur"] = anak["umur"]
+
+    return redirect(url_for("main.dashboard_anak", anak_id=anak_id))
 
 @main.route("/logout")
 def logout():
@@ -137,8 +264,9 @@ def logout():
 # ================= API =================
 @main.route("/api/start_session", methods=["POST"])
 def api_start_session():
-    user_id = request.json.get("user_id")
-    session_id = create_session(user_id)
+    anak_id = request.json.get("anak_id")
+    session_id = create_session(anak_id)
+
     return jsonify({"session_id": session_id})
 
 
@@ -152,9 +280,17 @@ def api_end_session():
 
 @main.route("/api/get_active_user", methods=["GET"])
 def get_active_user():
-    global ACTIVE_USER
-
-    if ACTIVE_USER:
-        return jsonify({"status": "success", "user": ACTIVE_USER})
+    if "anak_id" in session:
+        return jsonify({
+            "status": "success",
+            "user": {
+                "id": session["anak_id"],
+                "nama_anak": session["nama_anak"],
+                "umur": session["umur"]
+            }
+        })
     else:
-        return jsonify({"status": "error", "message": "Tidak ada user aktif"})
+        return jsonify({
+            "status": "error",
+            "message": "Tidak ada anak aktif"
+        })
