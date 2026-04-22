@@ -127,8 +127,9 @@
 								<th>No</th>
 								<th>Tanggal</th>
 								<th>ID Sesi</th>
+								<th>Level</th>
 								<th>Skor</th>
-								<th>Durasi Fokus</th>
+								<th>Durasi Bermain</th>
 								<th>Indikasi Fokus</th>
 							</tr>
 						</thead>
@@ -138,6 +139,11 @@
 								<td><span class="row-num">{{ loop.index }}</span></td>
 								<td>{{ s.tanggal }}</td>
 								<td><span class="session-id">{{ s.id }}</span></td>
+								<td>
+									<span class="level-badge">
+										{{ s.level | capitalize if s.level else 'Mudah' }}
+									</span>
+								</td>
 								<td>
 									<span class="score-pill {% if (s.skor_total or 0) >= 80 %}score-high{% elif (s.skor_total or 0) >= 50 %}score-mid{% else %}score-low{% endif %}">
 										{{ s.skor_total if s.skor_total else 0 }}

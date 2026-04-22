@@ -288,6 +288,16 @@
 	user-select: none;
 }
 
+.level-badge {
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e0f2fe;
+    color: #0369a1;
+    text-transform: capitalize;
+}
+
 /* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 900px) {
 	.progress-table th,

@@ -140,12 +140,18 @@ def update_level_anak(anak_id, level):
 # ================= SESSION (BERDASARKAN ANAK) =================
 def create_session(anak_id):
     conn = get_db_connection()
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
 
+    # 🔹 Ambil level terakhir anak
+    cursor.execute("SELECT current_level FROM anak WHERE id = %s", (anak_id,))
+    result = cursor.fetchone()
+    level = result["current_level"] if result else "mudah"
+
+    # 🔹 Simpan session dengan level awal
     cursor.execute("""
-        INSERT INTO sessions (anak_id, start_time, status)
-        VALUES (%s, NOW(), 'aktif')
-    """, (anak_id,))
+        INSERT INTO sessions (anak_id, start_time, status, level)
+        VALUES (%s, NOW(), 'aktif', %s)
+    """, (anak_id, level))
 
     conn.commit()
     session_id = cursor.lastrowid
@@ -186,6 +192,7 @@ def get_sessions_by_anak(anak_id):
         DATE(start_time) AS tanggal,
         durasi_total,
         skor_total,
+        level,
         status
     FROM sessions
     WHERE anak_id = %s
@@ -199,6 +206,22 @@ def get_sessions_by_anak(anak_id):
     conn.close()
 
     return sessions
+
+def set_active_anak(anak_id, user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        UPDATE anak SET is_active = FALSE WHERE user_id = %s
+    """, (user_id,))
+
+    cursor.execute("""
+        UPDATE anak SET is_active = TRUE WHERE id = %s
+    """, (anak_id,))
+
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 def update_anak(anak_id, nama_anak, umur):
     conn = get_db_connection()

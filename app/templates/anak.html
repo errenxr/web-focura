@@ -73,7 +73,6 @@
 		<!-- ── MAIN CONTENT ────────────────────────────────────── -->
 		<main class="dashboard-main">
 
-			<!-- Top Bar -->
 			<div class="topbar">
 				<p class="topbar-date" id="currentDate"></p>
 				<div class="topbar-user">
@@ -134,7 +133,7 @@
 								<td><span class="age-badge">{{ anak.umur }} Tahun</span></td>
 								<td>
 									<div class="action-group">
-										<a href="{{ url_for('main.dashboard_anak', anak_id=anak.id) }}"
+										<a href="{{ url_for('main.pilih_anak', anak_id=anak.id) }}"
 										   class="action-btn action-view" title="Lihat Progress">
 											<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
 											     stroke="currentColor" stroke-width="2"
@@ -144,8 +143,12 @@
 											</svg>
 											Lihat
 										</a>
-										<button class="action-btn action-edit"
-										        onclick="openEditModal({{ anak.id }}, '{{ anak.nama_anak }}', {{ anak.umur }})">
+
+										<!-- ✅ PERBAIKAN: onclick dihapus, nilai dipindah ke data-* -->
+										<button class="action-btn action-edit js-edit-btn"
+										        data-id="{{ anak.id }}"
+										        data-nama="{{ anak.nama_anak }}"
+										        data-umur="{{ anak.umur }}">
 											<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
 											     stroke="currentColor" stroke-width="2"
 											     stroke-linecap="round" stroke-linejoin="round">
@@ -154,8 +157,11 @@
 											</svg>
 											Edit
 										</button>
-										<button class="action-btn action-delete"
-										        onclick="openDeleteModal({{ anak.id }}, '{{ anak.nama_anak }}')">
+
+										<!-- ✅ PERBAIKAN: onclick dihapus, nilai dipindah ke data-* -->
+										<button class="action-btn action-delete js-delete-btn"
+										        data-id="{{ anak.id }}"
+										        data-nama="{{ anak.nama_anak }}">
 											<svg width="15" height="15" viewBox="0 0 24 24" fill="none"
 											     stroke="currentColor" stroke-width="2"
 											     stroke-linecap="round" stroke-linejoin="round">
@@ -408,7 +414,7 @@
 					{% endif %}
 				</div>
 				<p class="toast-msg">{{ message }}</p>
-				<button class="toast-close" onclick="dismissToast(this.closest('[data-toast]'))" aria-label="Tutup">
+				<button class="toast-close" id="toastCloseBtn" aria-label="Tutup">
 					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
 					     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 						<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -430,12 +436,17 @@
 		/* ── Toast ── */
 		function dismissToast(toast) {
 			toast.classList.add('toast-hide');
-			setTimeout(() => toast.remove(), 350);
+			setTimeout(function () { toast.remove(); }, 350);
 		}
 
-		// Auto dismiss setelah 4 detik
-		document.querySelectorAll('[data-toast]').forEach((toast, i) => {
-			setTimeout(() => {
+		document.querySelectorAll('[data-toast]').forEach(function (toast, i) {
+			/* Tombol tutup manual */
+			var closeBtn = toast.querySelector('.toast-close');
+			if (closeBtn) {
+				closeBtn.addEventListener('click', function () { dismissToast(toast); });
+			}
+			/* Auto-dismiss setelah 4 detik */
+			setTimeout(function () {
 				if (document.body.contains(toast)) dismissToast(toast);
 			}, 4000 + i * 300);
 		});
@@ -450,43 +461,85 @@
 			document.body.style.overflow = '';
 		}
 
-		document.querySelectorAll('.modal-overlay').forEach(o => {
-			o.addEventListener('click', e => { if (e.target === o) closeModal(o.id); });
+		/* Tutup saat klik backdrop */
+		document.querySelectorAll('.modal-overlay').forEach(function (overlay) {
+			overlay.addEventListener('click', function (e) {
+				if (e.target === overlay) closeModal(overlay.id);
+			});
 		});
-		document.addEventListener('keydown', e => {
-			if (e.key === 'Escape')
-				['addModalOverlay','editModalOverlay','deleteModalOverlay'].forEach(closeModal);
+
+		/* Tutup saat tekan ESC */
+		document.addEventListener('keydown', function (e) {
+			if (e.key === 'Escape') {
+				['addModalOverlay', 'editModalOverlay', 'deleteModalOverlay'].forEach(closeModal);
+			}
 		});
 
-		/* Tambah */
-		document.getElementById('openAddModalBtn').addEventListener('click', () => openModal('addModalOverlay'));
-		document.getElementById('closeAddModalBtn').addEventListener('click', () => closeModal('addModalOverlay'));
-		document.getElementById('cancelAddModalBtn').addEventListener('click', () => closeModal('addModalOverlay'));
-		const emptyBtn = document.getElementById('emptyAddBtn');
-		if (emptyBtn) emptyBtn.addEventListener('click', () => openModal('addModalOverlay'));
+		/* ── Modal Tambah ── */
+		document.getElementById('openAddModalBtn').addEventListener('click', function () {
+			openModal('addModalOverlay');
+		});
+		document.getElementById('closeAddModalBtn').addEventListener('click', function () {
+			closeModal('addModalOverlay');
+		});
+		document.getElementById('cancelAddModalBtn').addEventListener('click', function () {
+			closeModal('addModalOverlay');
+		});
 
-		/* Edit */
-		function openEditModal(id, nama, umur) {
-			document.getElementById('editAnakId').value    = id;
-			document.getElementById('edit_nama_anak').value = nama;
-			document.getElementById('edit_umur').value     = umur;
-			document.getElementById('editForm').action =
-				`{{ url_for('main.edit_anak', anak_id=0) }}`.replace('/0', '/' + id);
-			openModal('editModalOverlay');
+		var emptyBtn = document.getElementById('emptyAddBtn');
+		if (emptyBtn) {
+			emptyBtn.addEventListener('click', function () { openModal('addModalOverlay'); });
 		}
-		document.getElementById('closeEditModalBtn').addEventListener('click', () => closeModal('editModalOverlay'));
-		document.getElementById('cancelEditModalBtn').addEventListener('click', () => closeModal('editModalOverlay'));
 
-		/* Hapus */
-		function openDeleteModal(id, nama) {
-			document.getElementById('deleteAnakId').value = id;
-			document.getElementById('deleteAnakName').textContent = nama;
-			document.getElementById('deleteForm').action =
-				`{{ url_for('main.hapus_anak', anak_id=0) }}`.replace('/0', '/' + id);
-			openModal('deleteModalOverlay');
-		}
-		document.getElementById('closeDeleteModalBtn').addEventListener('click', () => closeModal('deleteModalOverlay'));
-		document.getElementById('cancelDeleteModalBtn').addEventListener('click', () => closeModal('deleteModalOverlay'));
+		/* ── Modal Edit ── */
+		/* ✅ Baca nilai dari data-* — tidak ada Jinja2 di dalam JS */
+		var editBaseUrl = '{{ url_for("main.edit_anak", anak_id=0) }}';
+
+		document.querySelectorAll('.js-edit-btn').forEach(function (btn) {
+			btn.addEventListener('click', function () {
+				var id   = btn.getAttribute('data-id');
+				var nama = btn.getAttribute('data-nama');
+				var umur = btn.getAttribute('data-umur');
+
+				document.getElementById('editAnakId').value     = id;
+				document.getElementById('edit_nama_anak').value = nama;
+				document.getElementById('edit_umur').value      = umur;
+				document.getElementById('editForm').action      = editBaseUrl.replace('/0', '/' + id);
+
+				openModal('editModalOverlay');
+			});
+		});
+
+		document.getElementById('closeEditModalBtn').addEventListener('click', function () {
+			closeModal('editModalOverlay');
+		});
+		document.getElementById('cancelEditModalBtn').addEventListener('click', function () {
+			closeModal('editModalOverlay');
+		});
+
+		/* ── Modal Hapus ── */
+		/* ✅ Baca nilai dari data-* — tidak ada Jinja2 di dalam JS */
+		var deleteBaseUrl = '{{ url_for("main.hapus_anak", anak_id=0) }}';
+
+		document.querySelectorAll('.js-delete-btn').forEach(function (btn) {
+			btn.addEventListener('click', function () {
+				var id   = btn.getAttribute('data-id');
+				var nama = btn.getAttribute('data-nama');
+
+				document.getElementById('deleteAnakId').value          = id;
+				document.getElementById('deleteAnakName').textContent  = nama;
+				document.getElementById('deleteForm').action           = deleteBaseUrl.replace('/0', '/' + id);
+
+				openModal('deleteModalOverlay');
+			});
+		});
+
+		document.getElementById('closeDeleteModalBtn').addEventListener('click', function () {
+			closeModal('deleteModalOverlay');
+		});
+		document.getElementById('cancelDeleteModalBtn').addEventListener('click', function () {
+			closeModal('deleteModalOverlay');
+		});
 	</script>
 </body>
 </html>

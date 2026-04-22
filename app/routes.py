@@ -1,5 +1,5 @@
 from flask import Blueprint, flash, render_template, request, redirect, url_for, session, jsonify
-from .models import create_anak, create_user, get_user_by_id, verify_user, get_anak_by_user, get_anak_by_id, create_session, end_session, get_sessions_by_anak, update_anak, delete_anak
+from .models import create_anak, create_user, get_db_connection, verify_user, get_anak_by_user, get_anak_by_id, set_active_anak, create_session, end_session, get_sessions_by_anak, update_anak, delete_anak
 
 
 main = Blueprint('main', __name__)
@@ -211,6 +211,7 @@ def progress_anak(anak_id):
     return render_template(
         "progress.html",
         sessions=sessions,
+        anak=anak,
         active_page="progress"
     )
 
@@ -249,6 +250,8 @@ def pilih_anak(anak_id):
     if not anak or anak["user_id"] != user_id:
         return "Akses tidak diizinkan!"
 
+    set_active_anak(anak_id, user_id)
+
     session["anak_id"] = anak["id"]
     session["nama_anak"] = anak["nama_anak"]
     session["umur"] = anak["umur"]
@@ -265,6 +268,9 @@ def logout():
 @main.route("/api/start_session", methods=["POST"])
 def api_start_session():
     anak_id = request.json.get("anak_id")
+    if not anak_id:
+        return jsonify({"status": "error", "message": "anak_id tidak ada"}), 400
+    
     session_id = create_session(anak_id)
 
     return jsonify({"session_id": session_id})
@@ -293,4 +299,32 @@ def get_active_user():
         return jsonify({
             "status": "error",
             "message": "Tidak ada anak aktif"
+        })
+    
+@main.route("/api/get_active_anak", methods=["GET"])
+def api_get_active_anak():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT id, nama_anak, umur, current_level
+        FROM anak
+        WHERE is_active = TRUE
+        LIMIT 1
+    """)
+
+    anak = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if anak:
+        return jsonify({
+            "status": "success",
+            "anak": anak
+        })
+    else:
+        return jsonify({
+            "status": "error",
+            "anak": None 
         })
