@@ -24,7 +24,21 @@ def login():
         if user:
             session["user_id"] = user["id"]
             session["email"] = user["email"]
-
+            
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            cursor.execute("UPDATE users SET is_login = FALSE")
+            
+            cursor.execute(
+                "UPDATE users SET is_login = TRUE WHERE id = %s",
+                (user["id"],)
+            )
+            
+            conn.commit()
+            cursor.close()
+            conn.close()
+            
             return redirect(url_for("main.dashboard_parent"))
         else:
             return render_template(
@@ -110,7 +124,7 @@ def register_anak():
         return "Umur anak harus antara 5 sampai 7 tahun!"
 
     create_anak(user_id, nama_anak, umur)
-    flash(f"Anak '{nama_anak}' berhasil didaftarkan! 🎉", "success")
+    flash(f"Anak '{nama_anak}' berhasil didaftarkan!", "success")
     return redirect(url_for("main.daftar_anak"))
 
 @main.route("/edit_anak/<int:anak_id>", methods=["POST"])
@@ -142,7 +156,7 @@ def edit_anak(anak_id):
     
     update_anak(anak_id, nama_anak, umur)
  
-    flash(f"Data '{nama_anak}' berhasil diperbarui! ✏️", "success")
+    flash(f"Data '{nama_anak}' berhasil diperbarui!", "success")
     return redirect(url_for("main.daftar_anak"))
 
 @main.route("/hapus_anak/<int:anak_id>", methods=["POST"])
@@ -260,6 +274,19 @@ def pilih_anak(anak_id):
 
 @main.route("/logout")
 def logout():
+    if "user_id" in session:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "UPDATE users SET is_login = FALSE WHERE id = %s",
+            (session["user_id"],)
+        )
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
     session.clear()
     return redirect(url_for("main.login"))
 
@@ -284,21 +311,31 @@ def api_end_session():
     return jsonify({"status": "success"})
 
 
-@main.route("/api/get_active_user", methods=["GET"])
-def get_active_user():
-    if "anak_id" in session:
+@main.route("/api/get_current_user", methods=["GET"])
+def get_current_user():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT id FROM users
+        WHERE is_login = TRUE
+        LIMIT 1
+    """)
+
+    user = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if user:
         return jsonify({
             "status": "success",
-            "user": {
-                "id": session["anak_id"],
-                "nama_anak": session["nama_anak"],
-                "umur": session["umur"]
-            }
+            "user_id": user["id"]
         })
     else:
         return jsonify({
             "status": "error",
-            "message": "Tidak ada anak aktif"
+            "user_id": None
         })
     
 @main.route("/api/get_active_anak", methods=["GET"])
@@ -306,12 +343,29 @@ def api_get_active_anak():
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
+    user_id = request.args.get("user_id")
+
+    if not user_id:
+        cursor.execute("""
+            SELECT id FROM users
+            WHERE is_login = TRUE
+            LIMIT 1
+        """)
+        user = cursor.fetchone()
+        user_id = user["id"] if user else None
+
+    if not user_id:
+        return jsonify({
+            "status": "error",
+            "anak": None
+        })
+
     cursor.execute("""
         SELECT id, nama_anak, umur, current_level
         FROM anak
-        WHERE is_active = TRUE
+        WHERE is_active = TRUE AND user_id = %s
         LIMIT 1
-    """)
+    """, (user_id,))
 
     anak = cursor.fetchone()
 
@@ -326,5 +380,5 @@ def api_get_active_anak():
     else:
         return jsonify({
             "status": "error",
-            "anak": None 
+            "anak": None
         })
