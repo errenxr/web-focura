@@ -3,7 +3,6 @@ import bcrypt
 from flask import current_app
 
 
-# ================= DATABASE =================
 def get_db_connection():
     return mysql.connector.connect(
         host=current_app.config["DB_HOST"],
@@ -12,8 +11,6 @@ def get_db_connection():
         database=current_app.config["DB_NAME"]
     )
 
-
-# ================= PASSWORD =================
 def hash_password(password):
     salt = bcrypt.gensalt()
     hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
@@ -24,7 +21,6 @@ def check_password(password, hashed):
     return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
 
 
-# ================= USER (ORANG TUA) =================
 def create_user(email, password):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -78,7 +74,6 @@ def verify_user(email, password):
     return None
 
 
-# ================= ANAK =================
 def create_anak(user_id, nama_anak, umur):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -121,7 +116,6 @@ def get_anak_by_id(anak_id):
     return data
 
 
-# 🔥 OPTIONAL (untuk masa depan Q-Learning / manual update)
 def update_level_anak(anak_id, level):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -137,17 +131,16 @@ def update_level_anak(anak_id, level):
     conn.close()
 
 
-# ================= SESSION (BERDASARKAN ANAK) =================
 def create_session(anak_id):
     conn = get_db_connection()
     cursor = conn.cursor(dictionary=True)
 
-    # 🔹 Ambil level terakhir anak
+    #Ambil level terakhir anak
     cursor.execute("SELECT current_level FROM anak WHERE id = %s", (anak_id,))
     result = cursor.fetchone()
     level = result["current_level"] if result else "mudah"
 
-    # 🔹 Simpan session dengan level awal
+    #Simpan session dengan level awal
     cursor.execute("""
         INSERT INTO sessions (anak_id, start_time, status, level)
         VALUES (%s, NOW(), 'aktif', %s)
@@ -238,7 +231,6 @@ def delete_anak(anak_id):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # hapus dulu session (jika ada foreign key)
     cursor.execute("DELETE FROM sessions WHERE anak_id=%s", (anak_id,))
     cursor.execute("DELETE FROM anak WHERE id=%s", (anak_id,))
 

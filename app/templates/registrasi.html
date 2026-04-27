@@ -13,11 +13,9 @@
 <body>
 	<div class="auth-wrapper">
 
-		<!-- ── Panel Kiri: Form ─────────────────────────────── -->
 		<div class="form-panel">
 			<div class="form-inner">
 
-				<!-- Logo -->
 				<div class="brand-mark">
 					<svg width="36" height="36" viewBox="0 0 32 32" fill="none">
 						<rect width="32" height="32" rx="10" fill="#185adb"/>
@@ -31,7 +29,6 @@
 				<h2 class="form-title">Buat Akun Baru</h2>
 				<p class="form-subtitle">Daftarkan anak Anda untuk mulai bermain</p>
 
-				<!-- ── Notifikasi Error ───────────────────── -->
 				{% if error %}
 				<div class="alert alert-error" id="alertBox">
 					<div class="alert-icon">
@@ -55,7 +52,6 @@
 					</button>
 				</div>
 				{% endif %}
-				<!-- ───────────────────────────────────────── -->
 
 				<form class="register-form" method="POST" novalidate>
 
