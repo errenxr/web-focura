@@ -9,7 +9,7 @@
 	justify-content: space-between;
 	flex-wrap: wrap;
 	gap: 16px;
-	margin-bottom: 24px;
+	margin-bottom: 16px;
 	animation: fadeUp 0.4s ease both;
 }
 
@@ -40,7 +40,165 @@
 	white-space: nowrap;
 }
 
-/* ── Table Wrapper ───────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   FILTER BAR
+══════════════════════════════════════════════════════════════ */
+.filter-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	background: var(--surface);
+	border: 1.5px solid var(--border);
+	border-radius: var(--radius-md);
+	padding: 14px 18px;
+	margin-bottom: 12px;
+	animation: fadeUp 0.42s ease 0.04s both;
+}
+
+.filter-bar-left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.filter-icon {
+	color: var(--text-muted);
+	flex-shrink: 0;
+}
+
+.filter-label {
+	font-size: 0.82rem;
+	font-weight: 700;
+	color: var(--text-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	white-space: nowrap;
+}
+
+/* Setiap grup (label + select) */
+.filter-group {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.filter-group-label {
+	font-size: 0.7rem;
+	font-weight: 700;
+	color: var(--text-muted);
+	letter-spacing: 0.6px;
+	text-transform: uppercase;
+	padding-left: 2px;
+}
+
+/* Select filter */
+.filter-select {
+	appearance: none;
+	-webkit-appearance: none;
+	background: var(--bg)
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%237b8ab4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")
+		no-repeat right 10px center;
+	border: 1.5px solid var(--border);
+	border-radius: var(--radius-sm);
+	padding: 7px 30px 7px 12px;
+	font-size: 0.88rem;
+	font-weight: 600;
+	font-family: inherit;
+	color: var(--text-main);
+	cursor: pointer;
+	min-width: 110px;
+	transition: border-color var(--transition), box-shadow var(--transition),
+	            background var(--transition);
+}
+
+.filter-select:focus {
+	outline: none;
+	border-color: var(--blue);
+	background-color: var(--surface);
+	box-shadow: 0 0 0 3px rgba(24, 90, 219, 0.10);
+}
+
+.filter-select:disabled {
+	opacity: 0.42;
+	cursor: not-allowed;
+	background-color: var(--bg);
+}
+
+/* Select aktif (ada nilai dipilih) */
+.filter-select:not(:disabled):not([value=""]) {
+	border-color: var(--blue);
+	color: var(--blue);
+	background-color: var(--blue-light);
+}
+
+/* Tombol Reset */
+.filter-reset-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 16px;
+	font-size: 0.83rem;
+	font-weight: 700;
+	font-family: inherit;
+	color: var(--text-muted);
+	background: var(--bg);
+	border: 1.5px solid var(--border);
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	white-space: nowrap;
+	transition: background var(--transition), color var(--transition),
+	            border-color var(--transition);
+}
+
+.filter-reset-btn:hover {
+	background: #fff5f5;
+	border-color: #fca5a5;
+	color: #e53e3e;
+}
+
+/* ── Info hasil filter ───────────────────────────────────────── */
+.filter-result {
+	display: none;
+	align-items: center;
+	gap: 7px;
+	font-size: 0.85rem;
+	font-weight: 500;
+	color: var(--text-muted);
+	background: var(--blue-light);
+	border: 1.5px solid #c5d9f8;
+	border-radius: var(--radius-sm);
+	padding: 8px 14px;
+	margin-bottom: 12px;
+	animation: fadeUp 0.3s ease both;
+}
+
+.filter-result strong {
+	color: var(--blue);
+	font-weight: 800;
+}
+
+/* ── Empty state saat filter kosong ──────────────────────────── */
+.filter-empty {
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 52px 24px;
+	color: var(--text-muted);
+}
+
+.filter-empty p {
+	font-size: 0.92rem;
+	font-weight: 600;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   TABLE WRAPPER
+══════════════════════════════════════════════════════════════ */
 .progress-table-wrapper {
 	background: var(--surface);
 	border-radius: var(--radius-lg);
@@ -136,13 +294,8 @@
 	transition: background var(--transition);
 }
 
-.progress-table tbody tr:last-child {
-	border-bottom: none;
-}
-
-.progress-table tbody tr:hover {
-	background: #f7faff;
-}
+.progress-table tbody tr:last-child { border-bottom: none; }
+.progress-table tbody tr:hover       { background: #f7faff; }
 
 .progress-table td {
 	padding: 14px 18px;
@@ -174,6 +327,17 @@
 	background: var(--bg);
 	padding: 3px 8px;
 	border-radius: 6px;
+}
+
+/* ── Level Badge ─────────────────────────────────────────────── */
+.level-badge {
+	padding: 4px 10px;
+	border-radius: 10px;
+	font-size: 12px;
+	font-weight: 600;
+	background: #e0f2fe;
+	color: #0369a1;
+	text-transform: capitalize;
 }
 
 /* ── Score Pill ──────────────────────────────────────────────── */
@@ -213,7 +377,6 @@
 	flex-wrap: wrap;
 }
 
-/* Tombol nomor halaman */
 .page-btn {
 	min-width: 36px;
 	height: 36px;
@@ -247,7 +410,6 @@
 	cursor: default;
 }
 
-/* Tombol Prev / Next (ikon panah) */
 .nav-btn {
 	width: 36px;
 	height: 36px;
@@ -276,7 +438,6 @@
 	cursor: not-allowed;
 }
 
-/* Ellipsis "…" */
 .page-ellipsis {
 	min-width: 36px;
 	height: 36px;
@@ -288,35 +449,7 @@
 	user-select: none;
 }
 
-.level-badge {
-    padding: 4px 10px;
-    border-radius: 10px;
-    font-size: 12px;
-    font-weight: 600;
-    background: #e0f2fe;
-    color: #0369a1;
-    text-transform: capitalize;
-}
-
-/* ── Responsive ──────────────────────────────────────────────── */
-@media (max-width: 900px) {
-	.progress-table th,
-	.progress-table td {
-		padding: 12px 12px;
-		font-size: 0.88rem;
-	}
-
-	.page-header {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-
-	.table-toolbar {
-		flex-direction: column;
-		align-items: flex-start;
-	}
-}
-
+/* ── Back Button ─────────────────────────────────────────────── */
 .back-btn {
 	display: flex;
 	align-items: center;
@@ -335,6 +468,32 @@
 	color: var(--blue);
 }
 
-.back-btn .nav-icon {
-	stroke: currentColor;
+.back-btn .nav-icon { stroke: currentColor; }
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 900px) {
+	.progress-table th,
+	.progress-table td {
+		padding: 12px 12px;
+		font-size: 0.88rem;
+	}
+
+	.page-header {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.table-toolbar {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.filter-bar {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.filter-bar-left {
+		gap: 10px;
+	}
 }

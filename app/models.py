@@ -155,25 +155,36 @@ def create_session(anak_id):
     return session_id
 
 
-def end_session(session_id, skor_total):
+def end_session(session_id, skor_total, level):
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    query = """
-    UPDATE sessions
-    SET end_time = NOW(),
-        durasi_total = TIMESTAMPDIFF(SECOND, start_time, NOW()),
-        skor_total = %s,
-        status = 'selesai'
-    WHERE id = %s
-    """
+    # Update session
+    cursor.execute("""
+        UPDATE sessions
+        SET end_time = NOW(),
+            durasi_total = TIMESTAMPDIFF(SECOND, start_time, NOW()),
+            skor_total = %s,
+            status = 'selesai',
+            level = %s
+        WHERE id = %s
+    """, (skor_total, level, session_id))
 
-    cursor.execute(query, (skor_total, session_id))
+    # Ambil anak_id dari session
+    cursor.execute("SELECT anak_id FROM sessions WHERE id = %s", (session_id,))
+    result = cursor.fetchone()
+    anak_id = result[0]
+
+    # Update level anak
+    cursor.execute("""
+        UPDATE anak
+        SET current_level = %s
+        WHERE id = %s
+    """, (level, anak_id))
+
     conn.commit()
-
     cursor.close()
     conn.close()
-
 
 def get_sessions_by_anak(anak_id):
     conn = get_db_connection()
@@ -236,3 +247,27 @@ def delete_anak(anak_id):
 
     conn.commit()
     conn.close()
+
+def get_dashboard_data(anak_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT 
+            s.id AS session_id,
+            s.skor_total AS skor,
+            s.durasi_total AS durasi,
+            COALESCE(f.status, 'tidak') AS fokus
+        FROM sessions s
+        LEFT JOIN focus_logs f 
+            ON s.id = f.session_id
+        WHERE s.anak_id = %s
+        ORDER BY s.id ASC
+    """, (anak_id,))
+
+    data = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return data

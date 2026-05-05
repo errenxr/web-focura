@@ -1,9 +1,13 @@
 from flask import Blueprint, flash, render_template, request, redirect, url_for, session, jsonify
-from .models import create_anak, create_user, get_db_connection, verify_user, get_anak_by_user, get_anak_by_id, set_active_anak, create_session, end_session, get_sessions_by_anak, update_anak, delete_anak
+from .models import create_anak, create_user, get_db_connection, verify_user, get_anak_by_user, get_anak_by_id, set_active_anak, create_session, end_session, get_sessions_by_anak, update_anak, delete_anak, update_level_anak, get_dashboard_data
 
 
 main = Blueprint('main', __name__)
 
+def format_time(seconds):
+    m = seconds // 60
+    s = seconds % 60
+    return f"{m:02}:{s:02}"
 
 @main.route("/", methods=["GET", "POST"])
 def login():
@@ -194,6 +198,11 @@ def dashboard_anak(anak_id):
     session["umur"] = anak["umur"]
 
     sessions = get_sessions_by_anak(anak_id)
+    for s in sessions:
+        if "durasi_total" in s and s["durasi_total"] is not None:
+            s["durasi_menit"] = format_time(s["durasi_total"])
+        else:
+            s["durasi_menit"] = "-"
 
     total_sesi = len(sessions)
     total_skor = sum(s["skor_total"] or 0 for s in sessions)
@@ -221,6 +230,11 @@ def progress_anak(anak_id):
         return "Akses tidak diizinkan!"
 
     sessions = get_sessions_by_anak(anak_id)
+    for s in sessions:
+        if "durasi_total" in s and s["durasi_total"] is not None:
+            s["durasi_menit"] = format_time(s["durasi_total"])
+        else:
+            s["durasi_menit"] = "-"
 
     return render_template(
         "progress.html",
@@ -307,7 +321,8 @@ def api_start_session():
 def api_end_session():
     session_id = request.json.get("session_id")
     skor = request.json.get("skor")
-    end_session(session_id, skor)
+    level = request.json.get("level")
+    end_session(session_id, skor, level)
     return jsonify({"status": "success"})
 
 
@@ -382,3 +397,26 @@ def api_get_active_anak():
             "status": "error",
             "anak": None
         })
+@main.route("/api/update_level", methods=["POST"])
+def api_update_level():
+    anak_id = request.json.get("anak_id")
+    level = request.json.get("level")
+
+    update_level_anak(anak_id, level)
+
+    return jsonify({"status": "success"})
+
+@main.route("/api/dashboard_data/<int:anak_id>")
+def api_dashboard_data(anak_id):
+    if "user_id" not in session:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    user_id = session["user_id"]
+    anak = get_anak_by_id(anak_id)
+
+    if not anak or anak["user_id"] != user_id:
+        return jsonify({"error": "Forbidden"}), 403
+
+    data = get_dashboard_data(anak_id)
+
+    return jsonify(data)
