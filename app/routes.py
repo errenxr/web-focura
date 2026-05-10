@@ -420,3 +420,67 @@ def api_dashboard_data(anak_id):
     data = get_dashboard_data(anak_id)
 
     return jsonify(data)
+
+@main.route("/api/get_active_session", methods=["GET"])
+def api_get_active_session():
+
+    anak_id = request.args.get("anak_id")
+
+    if not anak_id:
+        return jsonify({
+            "status": "error",
+            "message": "anak_id kosong"
+        }), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT id, anak_id, start_time
+        FROM sessions
+        WHERE anak_id = %s
+        AND status = 'aktif'
+        ORDER BY id DESC
+        LIMIT 1
+    """, (anak_id,))
+
+    session_data = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if session_data:
+        return jsonify({
+            "status": "success",
+            "session": session_data
+        })
+
+    return jsonify({
+        "status": "error",
+        "session": None
+    })
+
+@main.route("/api/save_focus_result", methods=["POST"])
+def api_save_focus_result():
+
+    anak_id = request.json.get("anak_id")
+    session_id = request.json.get("session_id")
+    status = request.json.get("status")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        INSERT INTO focus_logs
+        (anak_id, session_id, status)
+        VALUES (%s, %s, %s)
+    """, (anak_id, session_id, status))
+
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+    return jsonify({
+        "status": "success"
+    })
