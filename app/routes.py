@@ -106,6 +106,16 @@ def daftar_anak():
         active_page="anak"
     )
 
+@main.route("/detail_fokus")
+def detail_fokus():
+    if "user_id" not in session:
+        return redirect(url_for("main.login"))
+
+    return render_template(
+        "detail_fokus.html",
+        active_page="detail_fokus"
+    )
+
 
 @main.route("/register_anak", methods=["POST"])
 def register_anak():

@@ -184,6 +184,7 @@
 								<th>Skor</th>
 								<th>Durasi Bermain</th>
 								<th>Indikasi Fokus</th>
+								<th>Detail Fokus</th>
 							</tr>
 						</thead>
 						<tbody id="tableBody">
@@ -205,12 +206,21 @@
 								</td>
 								<td>{{ s.durasi_menit }}</td>
 								<td>-</td>
+								<td>
+									<a href="{{ url_for('main.detail_fokus', sesi_id=s.id) }}" class="btn-lihat">
+										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+											<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+											<circle cx="12" cy="12" r="3"/>
+										</svg>
+										Lihat
+									</a>
+								</td>
 							</tr>
 							{% endfor %}
 
 							{% if not sessions %}
 							<tr>
-								<td colspan="7" class="empty-state">
+								<td colspan="8" class="empty-state">
 									<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#b0bec5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:10px">
 										<circle cx="12" cy="12" r="10"/>
 										<line x1="12" y1="8" x2="12" y2="12"/>
